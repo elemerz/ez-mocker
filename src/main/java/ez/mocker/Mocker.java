@@ -1,5 +1,7 @@
 package ez.mocker;
 
+import lombok.*;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -10,13 +12,6 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.zip.GZIPInputStream;
-
-import com.jsoniter.JsonIterator;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.Setter;
-import lombok.SneakyThrows;
 
 public class Mocker {
     private static final String MOCK_LOCATION = "src/main/resources/mock/";
@@ -43,12 +38,10 @@ public class Mocker {
 
     private static final Object[] DOMAINS = { "com", "net", "org", "gov" };
     private static List<String> genericWords = new ArrayList<>();
-    private static List<String> maleFirstNames = new ArrayList<>();
-    private static List<String> femaleFirstNames = new ArrayList<>();
+    private static List<String> firstNamesMale = new ArrayList<>();
+    private static List<String> firstNamesFemale = new ArrayList<>();
     private static List<String> lastNames = new ArrayList<>();
     private static List<String> companies = new ArrayList<>();
-    private static Map<String, Country> countries = new HashMap<>();
-    private static Map<String, Language> languages = new HashMap<>();
     private static List<String> cities = new ArrayList<>();
     private static List<String> fruits = new ArrayList<>();
     private static List<String> medicinalPlants = new ArrayList<>();
@@ -56,72 +49,47 @@ public class Mocker {
     private static List<String> foods = new ArrayList<>();
     private static List<String> products = new ArrayList<>();
     private static List<String> panagrams = new ArrayList<>();
+    private static Map<String, Country> countries = new HashMap<>();
+    private static Map<String, Language> languages = new HashMap<>();
 
     /** Hide the implicit Public constructor. */
-    private Mocker() {
-    }
-
-    /** Get a list of city names. */
+    private Mocker() { }
     public static List<String> getCities() {
         return cities;
     }
-
-    /** Get a list of company names. */
     public static List<String> getCompanies() {
         return companies;
     }
-
-    /** Get a map of country names. */
     public static Map<String, Country> getCountries() {
         return countries;
     }
-
-    /** Returns a Map of predefined languages of the world. */
     public static Map<String, Language> getLanguages() {
         return languages;
     }
-
-    /** Get a list of female first names. */
-    public static List<String> getFemaleFirstNames() {
-        return femaleFirstNames;
+    public static List<String> getFirstNamesFemale() {
+        return firstNamesFemale;
     }
-
-    /** Get a list of male first names. */
-    public static List<String> getMaleFirstNames() {
-        return maleFirstNames;
+    public static List<String> getFirstNamesMale() {
+        return firstNamesMale;
     }
-
-    /** Get a list of fruit names. */
     public static List<String> getFruits() {
         return fruits;
     }
-
-    /** Get a list of vegetable names. */
     public static List<String> getVegetables() {
         return vegetables;
     }
-
-    /** Get a list of food names. */
     public static List<String> getFoods() {
         return foods;
     }
-
-    /** Get a list of product names. */
     public static List<String> getProducts() {
         return products;
     }
-
-    /** Get a list of panagrams. */
     public static List<String> getPanagrams() {
         return panagrams;
     }
-
-    /** Returns a Character within a given range: charFrom .. charTo */
     public static char getChar(char charFrom, char charTo) {
         return (char) getInt(charFrom, charTo);
     }
-
-    /** Returns a Character within a the range: A .. z */
     public static char getChar() {
         return getChar('A', 'z');
     }
@@ -316,7 +284,7 @@ public class Mocker {
 
     /** Returns a Human firts name. If isMale = true ==> will generate a Male name. */
     public static String getFirstName(boolean isMale) {
-        return getRandomListItem(isMale ? maleFirstNames : femaleFirstNames);
+        return getRandomListItem(isMale ? firstNamesMale : firstNamesFemale);
     }
 
     /** Returns a random Male/female firstname. */
@@ -331,12 +299,12 @@ public class Mocker {
 
     /** Returns a Human full name. If isMale = true ==> will generate a Male name. */
     public static String getFullName(boolean isMale) {
-        return getRandomListItem(isMale ? maleFirstNames : femaleFirstNames) + " " + getRandomListItem(lastNames);
+        return getRandomListItem(isMale ? firstNamesMale : firstNamesFemale) + " " + getRandomListItem(lastNames);
     }
 
     /** Returns a random male/female full name. */
     public static String getFullName() {
-        return getRandomListItem(getBoolean() ? maleFirstNames : femaleFirstNames) + " " + getRandomListItem(lastNames);
+        return getRandomListItem(getBoolean() ? firstNamesMale : firstNamesFemale) + " " + getRandomListItem(lastNames);
     }
 
     /** Returns a random Company Name. */
@@ -347,24 +315,24 @@ public class Mocker {
     /** Returns a random Country Object. */
     public static Country getCountry() {
         String aKey = choose(countries.keySet().toArray()).toString();
-        return (Country) countries.get(aKey);
+        return countries.get(aKey);
     }
 
     /** Returns the Country with the given 2-letter code. Eg: getContry("NL") ==> Netherlands. */
     public static Country getCountry(String digraph) {
-        return (Country) countries.get(digraph.trim().toUpperCase());
+        return countries.get(digraph.trim().toUpperCase());
     }
 
     /** Returns a random Country name. */
     public static String getCountryName() {
         String aKey = choose(countries.keySet().toArray()).toString();
-        return ((Country) countries.get(aKey)).getName();
+        return countries.get(aKey).getName();
     }
 
     /** Returns a random Country code. */
     public static String getCountryCode() {
         String aKey = choose(countries.keySet().toArray()).toString();
-        return ((Country) countries.get(aKey)).getCode();
+        return countries.get(aKey).getCode();
     }
 
     /** Returns a random City name. */
@@ -486,7 +454,7 @@ public class Mocker {
 
     /** Returns a random ZipCode. */
     public static String getZipCodeNL() {
-        return new StringBuilder(7).append(getInt(1000, 9999)).append(' ').append(getString(2).toUpperCase()).toString();
+        return String.valueOf(getInt(1000, 9999)) + ' ' + getString(2).toUpperCase();
     }
 
     /** Chooses a random item from an array of objects. */
@@ -499,7 +467,7 @@ public class Mocker {
 
     /** Returns the official 3-letter (!!!) language code of a language. Eg: English = ENG */
     public static String getLanguageCode2() {
-        return ((Language) languages.get(getLanguageKey())).getCode2().toUpperCase();
+        return languages.get(getLanguageKey()).getCode2().toUpperCase();
     }
 
     /** Returns a 2-letter (!!!) language code of a language. It does not always exist! */
@@ -509,14 +477,14 @@ public class Mocker {
 
     /** Returns the name of a random language. Eg: English */
     public static String getLanguageName() {
-        return ((Language) languages.get(getLanguageKey())).getName();
+        return languages.get(getLanguageKey()).getName();
     }
 
     /**
      * Returns a Language object based on the official 3-letter code of it. Eg: getLanguage("ENG") ==> Object for English
      */
     public static Language getLanguage(String code3) {
-        return (Language) languages.get(code3.toLowerCase());
+        return languages.get(code3.toLowerCase());
     }
 
     public static String getEmail() {
@@ -604,50 +572,57 @@ public class Mocker {
     }
 
     @SneakyThrows(IOException.class)
-    public static void loadAllLists() throws InterruptedException {
+    public static void loadAllLists() {
 //        Read from gzip
-//        byte[] ezMockZipped = Files.readAllBytes(Paths.get(MOCK_LOCATION + "mocker.json.gz"));
-//        String ezMockStr = unzipMock(ezMockZipped);
-        String ezMockStr = Files.readString(Paths.get(MOCK_LOCATION + "mocker.json"));
+        byte[] ezMockZipped = Files.readAllBytes(Paths.get(MOCK_LOCATION + "mocker.dat"));
+        String ezMockStr = unzipMock(ezMockZipped);
 //GZIP a plain JSON
 //        final byte[] zippedBytes = zipMock(ezMockStr.getBytes());
 //        Files.write(Paths.get(MOCK_LOCATION + "mocker.json.zip"), zippedBytes, StandardOpenOption.CREATE_NEW);
         System.out.println("ezMockStr= " + Objects.requireNonNull(ezMockStr).substring(0, 100) + " ... " + ezMockStr.substring(ezMockStr.length()-101) + "\nTrying to convert it to POJO ...");
-        EZMock ezMock = JsonIterator.deserialize(ezMockStr, EZMock.class);
-        System.out.println("Successfully converted strMock to POJO. Cities: " + ezMock.getCities().size());
-        cities = ezMock.getCities();
-        companies = ezMock.getCompanies();
-        countries = ezMock.getCountries().stream().collect(Collectors.toMap(Country::getCode, Function.identity()));
-        femaleFirstNames = ezMock.getFirstNamesFemale();
-        maleFirstNames = ezMock.getFirstNamesMale();
-        foods = ezMock.getFoods();
-        fruits = ezMock.getFruits();
-        genericWords = ezMock.getGeneric();
-        languages = ezMock.getLanguages().stream().collect(Collectors.toMap(Language::getCode3, Function.identity()));
-        lastNames = ezMock.getLastNames();
-        medicinalPlants = ezMock.getMedPlants();
-        products = ezMock.getProducts();
-        panagrams = ezMock.getPanagrams();
-        vegetables = ezMock.getVegetables();
-    }
-/*
-    private static byte[] zipMock(final byte[] ezMock) {
-        try {
-            ByteArrayOutputStream bos = new ByteArrayOutputStream();
-            GZIPOutputStream out = new GZIPOutputStream(bos) {
-                {
-                    def.setLevel(Deflater.BEST_COMPRESSION);
-                }
-            };
-            out.write(ezMock);
-            out.close();
-            return bos.toByteArray();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        fillUpLists(ezMockStr);
     }
 
-*/
+    private static void fillUpLists(final String ezMockStr) {
+        final String[] ezMockLines = ezMockStr.split("\\R");
+        cities = toStringList(ezMockLines[0]);
+        companies = toStringList(ezMockLines[1]);
+        countries = Arrays.stream(ezMockLines[2].substring(ezMockLines[2].indexOf(':') + 1).split("\\|")).map(sc -> {String[] c= sc.split(";"); return new Country(c[0], c[1]); }).collect(Collectors.toMap(Country::getCode, Function.identity()));
+        firstNamesFemale = toStringList(ezMockLines[3]);
+        firstNamesMale = toStringList(ezMockLines[4]);
+        foods = toStringList(ezMockLines[5]);
+        fruits = toStringList(ezMockLines[6]);
+        genericWords = toStringList(ezMockLines[7]);
+        languages = Arrays.stream(ezMockLines[8].substring(ezMockLines[8].indexOf(':') + 1).split("\\|")).map(sl -> {String[] l = sl.split(";");return new Language(l[0],l[1],l[2]); }).collect(Collectors.toMap(Language::getCode3, Function.identity()));
+        lastNames = toStringList(ezMockLines[9]);
+        medicinalPlants = toStringList(ezMockLines[10]);
+        panagrams = toStringList(ezMockLines[11]);
+        products = toStringList(ezMockLines[12]);
+        vegetables = toStringList(ezMockLines[13]);
+    }
+
+    private static List<String> toStringList(String ezMockLine) {
+        return Arrays.stream(ezMockLine.substring(ezMockLine.indexOf(':') + 1).split("\\|")).collect(Collectors.toList());
+    }
+
+    /*
+        private static byte[] zipMock(final byte[] ezMock) {
+            try {
+                ByteArrayOutputStream bos = new ByteArrayOutputStream();
+                GZIPOutputStream out = new GZIPOutputStream(bos) {
+                    {
+                        def.setLevel(Deflater.BEST_COMPRESSION);
+                    }
+                };
+                out.write(ezMock);
+                out.close();
+                return bos.toByteArray();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    
+    */
     private static String unzipMock(final byte[] ezMockZipped) {
         byte[] buffer = new byte[4096];
 
@@ -684,42 +659,23 @@ public class Mocker {
         for (int i = 0; i < 32; i++) {
             sb.append(Mocker.choose(TOKEN_CHARSET));
         }
-
         return sb.toString();
     }
 
-    @Getter @Setter  @NoArgsConstructor
+    @Getter @Setter  @AllArgsConstructor
     public static class Country {
         private String code;
         private String name;
     }
 
-    @Getter @Setter @NoArgsConstructor
+    @Getter @Setter @AllArgsConstructor
     public static class Language {
         private String code3;
         private String code2;
         private String name;
     }
 
-    @Getter @Setter @NoArgsConstructor
-    private static class EZMock {
-        private List<String> cities = new ArrayList<>(600);
-        private List<String> companies = new ArrayList<>(1000);
-        private List<Country> countries = new ArrayList<>(1000);
-        private List<String> firstNamesFemale = new ArrayList<>(5000);
-        private List<String> firstNamesMale = new ArrayList<>(1500);
-        private List<String> foods = new ArrayList<>(100);
-        private List<String> fruits = new ArrayList<>(50);
-        private List<String> generic = new ArrayList<>(1000);
-        private List<Language> languages = new ArrayList<>(260);
-        private List<String> lastNames = new ArrayList<>(5000);
-        private List<String> medPlants = new ArrayList<>(100);
-        private List<String> panagrams = new ArrayList<>(150);
-        private List<String> products = new ArrayList<>(150);
-        private List<String> vegetables = new ArrayList<>(50);
-    }
-
-    public static void main(final String[] args) throws InterruptedException {
+    public static void main(final String[] args) {
         loadAllLists();
         System.out.println("Some Mock samples:");
         System.out.println("Cities: " + Mocker.getCity() + ", " + Mocker.getCity() + ", " + Mocker.getCity() + ", " + Mocker.getCity());
@@ -732,7 +688,7 @@ public class Mocker {
         System.out.println("Fruits: " + Mocker.getFruit() + ", " + Mocker.getFruit());
         System.out.println("Random phrase: " + Mocker.getPhrase(10));
         System.out.println("Medicinal Plants: " + Mocker.getMedicinalPlant() + ", " + Mocker.getMedicinalPlant());
-        System.out.println("Medicinal Panagrams: " + Mocker.getPanagram());
+        System.out.println("Panagrams: " + Mocker.getPanagram());
         System.out.println("Products: " + Mocker.getProduct());
         System.out.println("Vegetables: " + Mocker.getVegetable() + ", " + Mocker.getVegetable());
     }

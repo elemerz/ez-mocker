@@ -25,24 +25,16 @@
   </issueManagement>
 
   <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.compiler.source>11</maven.compiler.source>
     <maven.compiler.target>${maven.compiler.source}</maven.compiler.target>
     <maven.compiler.testSource>${maven.compiler.source}</maven.compiler.testSource>
     <maven.compiler.testTarget>${maven.compiler.testSource}</maven.compiler.testTarget>
-    <jackson.version>2.13.0</jackson.version>
-    <json.simple.version>1.1.1</json.simple.version>
     <lombok.version>1.18.22</lombok.version>
     <mainClass>ez.mocker.Mocker</mainClass>
   </properties>
 
   <dependencies>
-    <!-- https://mvnrepository.com/artifact/com.jsoniter/jsoniter -->
-    <dependency>
-      <groupId>com.jsoniter</groupId>
-      <artifactId>jsoniter</artifactId>
-      <version>0.9.23</version>
-    </dependency>
-
     <dependency>
       <groupId>org.projectlombok</groupId>
       <artifactId>lombok</artifactId>
